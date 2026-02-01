@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Register - IntervuGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <style>
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+
+        .flash-msg {
+            color: #ff4d4d;
+            margin-bottom: 10px;
+        }
+
+        .link-text {
+            color: #ddd;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .link-text a {
+            color: cyan;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="landing-container">
+        <div class="landing-card">
+            <h2 class="landing-title" style="font-size: 32px">Register</h2>
+
+            {% with messages = get_flashed_messages(category_filter=["error"]) %}
+            {% if messages %}
+            {% for message in messages %}
+            <p class="flash-msg">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <input type="text" name="name" class="form-input" placeholder="Full Name" required>
+                <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+                <input type="password" name="password" class="form-input" placeholder="Password" required>
+
+                <button type="submit" class="landing-btn">Create Account</button>
+            </form>
+
+            <p class="link-text">Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+            <p class="link-text"><a href="{{ url_for('landing') }}">Back to Home</a></p>
+        </div>
+    </div>
+</body>
+
+</html>

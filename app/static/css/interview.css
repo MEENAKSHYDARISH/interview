@@ -1,0 +1,148 @@
+.interviewPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, #0a0a0a, #000);
+  padding: 30px;
+  font-family: "Poppins", sans-serif;
+}
+
+.interviewCard {
+  width: 100%;
+  max-width: 950px;
+  padding: 35px;
+  border-radius: 18px;
+  background: rgba(15, 15, 15, 0.7);
+  backdrop-filter: blur(14px);
+  border: 2px solid rgba(0, 255, 255, 0.35);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.35),
+              0 0 40px rgba(150, 0, 255, 0.25);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.interviewTitle {
+  text-align: center;
+  font-size: 2.3rem;
+  color: cyan;
+  text-shadow: 0 0 10px cyan, 0 0 25px rgba(0, 255, 255, 0.6);
+  margin-bottom: 10px;
+}
+
+.interviewSub {
+  text-align: center;
+  color: #ddd;
+  font-size: 1rem;
+  margin-bottom: 25px;
+}
+
+.interviewSub span {
+  color: #ff4dff;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 77, 255, 0.7);
+}
+
+.videoBox {
+  width: 100%;
+  height: 360px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid rgba(0, 255, 255, 0.4);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.35),
+              0 0 30px rgba(255, 0, 255, 0.25);
+  background: black;
+}
+
+.videoFeed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.videoOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: cyan;
+  font-size: 1.3rem;
+  background: rgba(0, 0, 0, 0.65);
+  text-shadow: 0 0 10px cyan;
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #ff4dff;
+}
+
+.statusBox {
+  margin-top: 20px;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  border: 1px solid rgba(0, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+}
+
+.btnRow {
+  display: flex;
+  gap: 18px;
+  margin-top: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.neonBtn {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.25s ease-in-out;
+  min-width: 180px;
+}
+
+.neonBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.neonBtn.blue {
+  background: cyan;
+  color: black;
+  box-shadow: 0 0 18px cyan, 0 0 35px rgba(0, 255, 255, 0.6);
+}
+
+.neonBtn.blue:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px cyan, 0 0 50px rgba(0, 255, 255, 0.8);
+}
+
+.neonBtn.pink {
+  background: #ff4dff;
+  color: black;
+  box-shadow: 0 0 18px #ff4dff, 0 0 35px rgba(255, 77, 255, 0.6);
+}
+
+.neonBtn.pink:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #ff4dff, 0 0 50px rgba(255, 77, 255, 0.8);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

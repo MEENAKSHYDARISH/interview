@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_select.css') }}">
+    <!-- Reusing NeonCard styles from previous knowledge or assuming generic card -->
+    <style>
+        .page-center {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, #2b1055, #000);
+        }
+
+        .neon-card {
+            background: rgba(43, 16, 85, 0.4);
+            border: 1px solid #7d2ae8;
+            box-shadow: 0 0 15px #7d2ae8;
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            width: 350px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-center">
+        <div class="neon-card">
+            <h2 class="title" style="text-align: center; margin-bottom: 20px;">Select Your Role</h2>
+
+            <select id="roleSelect" class="dropdown">
+                <option value="">Choose job role</option>
+                <option value="Software Engineer">Software Engineer</option>
+                <option value="Data Analyst">Data Analyst</option>
+                <option value="UI/UX Designer">UI/UX Designer</option>
+            </select>
+
+            <select id="typeSelect" class="dropdown">
+                <option value="">Interview type</option>
+                <option value="Technical">Technical</option>
+                <option value="HR Round">HR Round</option>
+                <option value="Aptitude">Aptitude</option>
+            </select>
+
+            <button class="neon-btn" onclick="goToInterview()">
+                Continue
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function goToInterview() {
+            const role = document.getElementById('roleSelect').value;
+            const type = document.getElementById('typeSelect').value;
+
+            if (!role || !type) {
+                alert("Please select both a role and an interview type.");
+                return;
+            }
+
+            // Navigate to interview page with params
+            window.location.href = `/interview?role=${encodeURIComponent(role)}&type=${encodeURIComponent(type)}`;
+        }
+    </script>
+</body>
+
+</html>

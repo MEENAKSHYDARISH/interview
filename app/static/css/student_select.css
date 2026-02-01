@@ -1,0 +1,49 @@
+.student-role-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, #2b1055, #000);
+}
+
+.title {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #ffffff;
+}
+
+.dropdown {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+
+.dropdown option {
+  color: black;
+}
+
+.neon-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 2px solid #00f0ff;
+  background: transparent;
+  color: #00f0ff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.neon-btn:hover {
+  background: #00f0ff;
+  color: #000;
+  box-shadow: 0 0 15px #00f0ff;
+}
