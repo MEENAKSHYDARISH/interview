@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "name": "Navaneeth M S",
+      "email": "navaneethms182@gmail.com",
+      "password": "scrypt:32768:8:1$rrtZUJijbtah75SL$3fb8ccb2a76c1a857b98f901876c1bd16d0e7ab030de04e9d4a5d62e4a762702467eeeb97af381581ab48382c74ad52435ff94e60f2a19ca7c58d9f2d0a499ee",
+      "role": "student",
+      "_id": "2baaaee2-fcf2-4f28-bc03-13d91ae208fe"
+    }
+  ],
+  "job_roles": []
+}
