@@ -1,0 +1,164 @@
+/* Shared Design System - "IntervuGo Neon" */
+
+/* Variables */
+:root {
+    --bg-dark: #000814;
+    --bg-gradient: linear-gradient(135deg, #1a0033, #000814);
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(0, 255, 255, 0.4);
+    --neon-cyan: cyan;
+    --neon-primary: #00ffd5;
+    --text-main: #ffffff;
+    --text-dim: #cbd5e1;
+    --text-shadow: 0 0 12px var(--neon-cyan);
+    --box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+    --font-main: "Segoe UI", sans-serif;
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Layout */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-main);
+    color: var(--text-main);
+    background: var(--bg-gradient);
+    overflow-x: hidden;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+/* Shared Components */
+
+/* Logo */
+.app-logo {
+    display: block;
+    margin: 0 auto 1.5rem auto;
+    max-height: 60px;
+    /* Adjust based on actual logo size */
+    filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+}
+
+.app-title {
+    font-size: 42px;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: var(--text-shadow);
+    text-align: center;
+}
+
+.app-subtitle {
+    font-size: 16px;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Glass Card */
+.glass-card {
+    width: 90%;
+    max-width: 480px;
+    padding: 40px 30px;
+    background: var(--glass-bg);
+    border-radius: 20px;
+    backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Controls */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+/* Buttons */
+.btn-neon {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-primary));
+    color: #000;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--neon-cyan);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-neon:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--neon-cyan);
+}
+
+.btn-neon:disabled {
+    filter: grayscale(1);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--neon-cyan);
+    border: 2px solid var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--neon-cyan);
+    color: black;
+    box-shadow: 0 0 20px var(--neon-cyan);
+}
+
+/* Utilities */
+.hidden {
+    display: none;
+}
+
+.text-center {
+    text-align: center;
+}

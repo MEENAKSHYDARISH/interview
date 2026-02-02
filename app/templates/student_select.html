@@ -4,68 +4,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Role</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_select.css') }}">
-    <!-- Reusing NeonCard styles from previous knowledge or assuming generic card -->
+    <title>Configure Interview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/interview.css') }}">
     <style>
-        .page-center {
+        .select-container {
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            background: radial-gradient(circle at top, #2b1055, #000);
+            justify-content: center;
+            background: radial-gradient(circle at top, #1a1a2e, #000);
+            padding: 2rem;
         }
 
-        .neon-card {
-            background: rgba(43, 16, 85, 0.4);
-            border: 1px solid #7d2ae8;
-            box-shadow: 0 0 15px #7d2ae8;
-            padding: 30px;
+        .config-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
             border-radius: 20px;
-            backdrop-filter: blur(10px);
-            width: 350px;
-            color: white;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 0 40px rgba(108, 92, 231, 0.15);
+        }
+
+        .config-card h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            background: linear-gradient(90deg, #fff, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #a0a0b0;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 10px rgba(108, 92, 231, 0.3);
+        }
+
+        .file-drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .file-drop-zone:hover {
+            border-color: #6c5ce7;
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .file-drop-zone.active {
+            border-color: #55efc4;
+            background: rgba(85, 239, 196, 0.1);
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .file-name {
+            color: #55efc4;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-start {
+            width: 100%;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: #fff;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-start:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="page-center">
-        <div class="neon-card">
-            <h2 class="title" style="text-align: center; margin-bottom: 20px;">Select Your Role</h2>
+    <div class="select-container">
+        <div class="config-card">
+            <h2>Setup Interview</h2>
 
-            <select id="roleSelect" class="dropdown">
-                <option value="">Choose job role</option>
-                <option value="Software Engineer">Software Engineer</option>
-                <option value="Data Analyst">Data Analyst</option>
-                <option value="UI/UX Designer">UI/UX Designer</option>
-            </select>
+            <div class="form-group">
+                <label class="form-label">Target Role</label>
+                <select id="roleSelect" class="form-control" onchange="toggleCustomRole()">
+                    <option value="" disabled selected>Select a role...</option>
+                    <option value="Software Engineer">Software Engineer</option>
+                    <option value="Data Scientist">Data Scientist</option>
+                    <option value="Product Manager">Product Manager</option>
+                    <option value="Custom">Other (Custom)</option>
+                </select>
+                <input type="text" id="customRoleInput" class="form-control hidden"
+                    placeholder="Enter custom role (e.g. AI Researcher)" style="margin-top: 10px;">
+            </div>
 
-            <select id="typeSelect" class="dropdown">
-                <option value="">Interview type</option>
-                <option value="Technical">Technical</option>
-                <option value="HR Round">HR Round</option>
-                <option value="Aptitude">Aptitude</option>
-            </select>
+            <div class="form-group">
+                <label class="form-label">Interview Type</label>
+                <select id="typeSelect" class="form-control">
+                    <option value="Technical">Technical Round</option>
+                    <option value="Behavioral">Behavioral / HR</option>
+                    <option value="System Design">System Design</option>
+                </select>
+            </div>
 
-            <button class="neon-btn" onclick="goToInterview()">
-                Continue
-            </button>
+            <div class="form-group">
+                <label class="form-label">Resume (Optional)</label>
+                <div class="file-drop-zone" id="dropZone">
+                    <span class="file-icon">📄</span>
+                    <span id="dropText">Drag & Drop PDF/TXT or Click to Upload</span>
+                    <input type="file" id="resumeInput" accept=".pdf,.txt" class="hidden">
+                    <div class="file-name" id="fileName">resume.pdf</div>
+                </div>
+                <!-- Hidden storage for extracted text -->
+                <textarea id="resumeText" class="hidden"></textarea>
+            </div>
+
+            <button class="btn-start" onclick="startSession()" id="startBtn">Start Interview</button>
         </div>
     </div>
 
     <script>
-        function goToInterview() {
-            const role = document.getElementById('roleSelect').value;
-            const type = document.getElementById('typeSelect').value;
+        // Custom Role Logic
+        function toggleCustomRole() {
+            const select = document.getElementById('roleSelect');
+            const custom = document.getElementById('customRoleInput');
+            if (select.value === 'Custom') {
+                custom.classList.remove('hidden');
+                custom.focus();
+            } else {
+                custom.classList.add('hidden');
+            }
+        }
 
-            if (!role || !type) {
-                alert("Please select both a role and an interview type.");
+        // File Upload Logic
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('resumeInput');
+        const fileNameDisplay = document.getElementById('fileName');
+        const resumeTextArea = document.getElementById('resumeText');
+        const dropText = document.getElementById('dropText');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', handleFile);
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('active');
+        });
+
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('active'));
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('active');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFile();
+            }
+        });
+
+        async function handleFile() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            fileNameDisplay.textContent = file.name;
+            fileNameDisplay.style.display = 'block';
+            dropText.textContent = "Processing...";
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch('/api/resume/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    resumeTextArea.value = data.text;
+                    dropText.textContent = "Resume analyzed ✅";
+                } else {
+                    dropText.textContent = "Error parsing file ❌";
+                    alert(data.error);
+                }
+            } catch (e) {
+                console.error(e);
+                dropText.textContent = "Upload failed ❌";
+            }
+        }
+
+        // Navigation
+        function startSession() {
+            let role = document.getElementById('roleSelect').value;
+            if (role === 'Custom') role = document.getElementById('customRoleInput').value;
+
+            const type = document.getElementById('typeSelect').value;
+            const resumeText = document.getElementById('resumeText').value;
+
+            if (!role) {
+                alert("Please select or enter a role.");
                 return;
             }
 
-            // Navigate to interview page with params
+            // Save configuration to sessionStorage
+            const sessionData = {
+                role: role,
+                type: type,
+                resumeText: resumeText
+            };
+            sessionStorage.setItem('interviewConfig', JSON.stringify(sessionData));
+
+            // Redirect
             window.location.href = `/interview?role=${encodeURIComponent(role)}&type=${encodeURIComponent(type)}`;
         }
     </script>

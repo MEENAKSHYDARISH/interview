@@ -121,9 +121,14 @@ class InterviewController {
             aiStatus: document.getElementById('aiStatus')
         };
 
+        // Load config from sessionStorage if available (from Select Page)
+        const storedConfig = sessionStorage.getItem('interviewConfig');
+        const config = storedConfig ? JSON.parse(storedConfig) : {};
+
         this.apiState = {
-            role: new URLSearchParams(window.location.search).get('role') || 'Software Engineer',
-            type: new URLSearchParams(window.location.search).get('type') || 'Technical',
+            role: config.role || new URLSearchParams(window.location.search).get('role') || 'Software Engineer',
+            type: config.type || new URLSearchParams(window.location.search).get('type') || 'Technical',
+            resumeText: config.resumeText || "No resume provided.",
             conversationActive: false
         };
 
@@ -173,7 +178,7 @@ class InterviewController {
                 body: JSON.stringify({
                     role: this.apiState.role,
                     difficulty: 'Medium',
-                    resume_text: "Demo User Resume..." // TODO: Fetch real resume
+                    resume_text: this.apiState.resumeText
                 })
             });
             const data = await res.json();
