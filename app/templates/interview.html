@@ -1,123 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview Session</title>
+    <title>AI Interview Session</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/interview.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <div class="interviewPage">
-        <div class="interviewCard">
-            <h1 class="interviewTitle">AI Interview Session</h1>
+    <div class="app-container">
+        <!-- Header / Status Bar -->
+        <header class="top-bar">
+            <div class="logo">AI Interviewer</div>
+            <div class="session-info">
+                <span id="roleBadge" class="badge">Role: Loading...</span>
+                <span id="statusBadge" class="badge status-waiting">Waiting to Start</span>
+            </div>
+            <button id="finishBtn" class="btn-danger" disabled>End Session</button>
+        </header>
 
-            <p class="interviewSub">
-                Role: <span id="roleDisplay">Not Selected</span> | Type: <span id="typeDisplay">Not Selected</span>
-            </p>
+        <!-- Main Content Area -->
+        <main class="main-stage">
+            
+            <!-- Avatar / AI View -->
+            <div class="avatar-stage">
+                <div class="avatar-visualizer" id="avatarVisualizer">
+                    <!-- CSS/Canvas Animation will go here -->
+                    <div class="avatar-circle"></div>
+                    <div class="avatar-pulse"></div>
+                    <div class="avatar-pulse delay-1"></div>
+                    <div class="avatar-pulse delay-2"></div>
+                </div>
+                <div class="ai-status" id="aiStatus">AI is ready</div>
+            </div>
 
-            <div class="videoBox">
-                <video id="videoFeed" autoplay muted class="videoFeed"></video>
-                <div id="videoOverlay" class="videoOverlay">
-                    <p>🎥 Camera Preview</p>
-                    <p class="hint">Click Start Interview to begin</p>
+            <!-- User Video Feed (PIP style) -->
+            <div class="user-feed-container drag-enabled">
+                <video id="userVideo" autoplay muted playsinline></video>
+                <div class="mic-status" id="micStatus">
+                    <span class="icon">🎙️</span> <span id="micLevel">--</span>
                 </div>
             </div>
 
-            <div class="statusBox">
-                <p id="statusText">Ready to start interview</p>
+            <!-- Transcript / Captions -->
+            <div class="captions-container" id="captionsBox">
+                <div class="caption-line ai" id="aiCaption">Click Start to begin the interview.</div>
+                <div class="caption-line user" id="userCaption"></div>
             </div>
 
-            <div class="btnRow">
-                <button id="startBtn" class="neonBtn blue">
-                    Start Interview
-                </button>
-
-                <button id="finishBtn" class="neonBtn pink" disabled>
-                    Finish Interview
-                </button>
+            <!-- Controls Overlay -->
+            <div class="controls-overlay" id="startOverlay">
+                <div class="glass-panel">
+                    <h2>Ready for your interview?</h2>
+                    <p>Can we access your camera and microphone?</p>
+                    <button id="startBtn" class="btn-primary-lg">Start Interview</button>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
 
-    <script>
-        // State
-        let stream = null;
-        let started = false;
+    <!-- Hidden audio element for cues if needed -->
+    <audio id="cueSound" src=""></audio>
 
-        // Elements
-        const videoElement = document.getElementById('videoFeed');
-        const overlayElement = document.getElementById('videoOverlay');
-        const statusText = document.getElementById('statusText');
-        const startBtn = document.getElementById('startBtn');
-        const finishBtn = document.getElementById('finishBtn');
-        const roleDisplay = document.getElementById('roleDisplay');
-        const typeDisplay = document.getElementById('typeDisplay');
-
-        // URL Params
-        const params = new URLSearchParams(window.location.search);
-        roleDisplay.textContent = params.get('role') || 'Not Selected';
-        typeDisplay.textContent = params.get('type') || 'Not Selected';
-
-        // Functions
-        async function startCamera() {
-            try {
-                statusText.textContent = "Requesting camera access...";
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true
-                });
-                videoElement.srcObject = stream;
-                overlayElement.style.display = 'none';
-                statusText.textContent = "Camera started ✅ You can begin!";
-                return true;
-            } catch (error) {
-                console.error(error);
-                statusText.textContent = "Camera permission denied ❌ Please allow camera/mic access";
-                return false;
-            }
-        }
-
-        function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-                videoElement.srcObject = null;
-            }
-        }
-
-        // Event Listeners
-        startBtn.addEventListener('click', async () => {
-            if (started) return;
-
-            const success = await startCamera();
-            if (success) {
-                started = true;
-                startBtn.textContent = "Interview Running...";
-                startBtn.disabled = true;
-                finishBtn.disabled = false;
-                statusText.textContent = "Interview started 🚀 Answer confidently!";
-            }
-        });
-
-        finishBtn.addEventListener('click', () => {
-            stopCamera();
-            started = false;
-            startBtn.disabled = true; // cannot restart in this flow
-            finishBtn.disabled = true;
-            statusText.textContent = "Interview finished ✅ Redirecting to report...";
-
-            setTimeout(() => {
-                window.location.href = "/report?sessionId=mock_session_id";
-            }, 1200);
-        });
-
-        // Cleanup
-        window.addEventListener('beforeunload', () => {
-            stopCamera();
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/interview.js') }}"></script>
 </body>
-
 </html>
