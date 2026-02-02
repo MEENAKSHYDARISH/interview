@@ -13,6 +13,7 @@ from .routes.setup_bot import setup_bot_bp
 from .routes.hr_roles import hr_roles_bp
 from .routes.student_resume import student_resume_bp
 from .routes.auth import auth_bp
+from .routes.interview_api import interview_api_bp
 from flask_login import LoginManager, login_required, current_user
 from .models import User
 from .db import get_db
@@ -30,6 +31,7 @@ app.register_blueprint(setup_bot_bp)
 app.register_blueprint(hr_roles_bp)
 app.register_blueprint(student_resume_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(interview_api_bp)
 
 # Frontend Routes (Pages)
 @app.route('/')
