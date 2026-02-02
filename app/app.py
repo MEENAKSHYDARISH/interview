@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, session
 import os
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -51,7 +51,8 @@ def interview_page():
 @app.route('/report')
 @login_required
 def report_page():
-    return render_template('report.html', user=current_user)
+    report_data = session.get('report_data', {})
+    return render_template('report.html', user=current_user, report=report_data)
 
 # Run
 if __name__ == '__main__':

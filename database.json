@@ -6,6 +6,20 @@
       "password": "scrypt:32768:8:1$rrtZUJijbtah75SL$3fb8ccb2a76c1a857b98f901876c1bd16d0e7ab030de04e9d4a5d62e4a762702467eeeb97af381581ab48382c74ad52435ff94e60f2a19ca7c58d9f2d0a499ee",
       "role": "student",
       "_id": "2baaaee2-fcf2-4f28-bc03-13d91ae208fe"
+    },
+    {
+      "name": "Meenakshy Darish",
+      "email": "meenakshyd23@gmail.com",
+      "password": "scrypt:32768:8:1$bCFoQveVWLeG8uxt$7638a7cd3743a71d642060cb29210177d4f06cc02bb2ff22935ee95b008fa20e7c5b34038e17a5404a1c911193d1342abbd7da3fc71a721fa7f5f77708f433bf",
+      "role": "student",
+      "_id": "0ca502da-4432-42a6-b583-e5b80e9f686b"
+    },
+    {
+      "name": "Meenakshy Darish",
+      "email": "meenakshyd23@gmail.com",
+      "password": "scrypt:32768:8:1$4Zpw7Hwj0mrloRZs$3e0f2518fbd6b6c937240f2414013ac1411020eaf26d79b6048a3d42ab8d677c3894b920d5cd1306871f4311035e591583dbbeb90776aef7eaa7b4f8ab5cd701",
+      "role": "student",
+      "_id": "045dde04-5b9b-4ee0-98cd-a829a40c1e0c"
     }
   ],
   "job_roles": []
