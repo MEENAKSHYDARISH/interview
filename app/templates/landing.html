@@ -5,23 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IntervuGo - AI Interviewer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}">
 </head>
 
 <body>
-    <div class="landing-container">
-        <div class="landing-card">
-            <h1 class="landing-title">IntervuGo</h1>
-            <p class="landing-subtitle">
+    <div class="page-container">
+        <div class="glass-card">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="IntervuGo Logo" class="app-logo">
+            <h1 class="app-title">IntervuGo</h1>
+            <p class="app-subtitle">
                 AI‑Powered Virtual Interview Platform
             </p>
 
-            <button class="landing-btn" onclick="window.location.href='/login'">
-                🚀 Student Login
+            <button class="btn-neon" onclick="window.location.href='/student/select'">
+                🚀 Student Access
             </button>
 
-            <button class="landing-btn secondary" onclick="alert('HR Login not implemented in this demo')">
-                👩‍💼 HR Login
+            <button class="btn-neon btn-secondary" onclick="alert('HR Login not implemented in this demo')">
+                👩‍💼 HR Portal
             </button>
         </div>
     </div>
