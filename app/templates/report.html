@@ -3,41 +3,282 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Interview Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Performance Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/interview.css') }}">
     <style>
-        body {
-            background: #000;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .report-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
             height: 100vh;
-            font-family: sans-serif;
+            overflow-y: auto;
         }
 
-        .card {
-            padding: 40px;
-            border: 1px solid cyan;
-            border-radius: 10px;
+        .report-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .report-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #fff, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            position: relative;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-circle circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .score-bg {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .score-val {
+            stroke: #6c5ce7;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
         }
 
-        .score {
-            font-size: 3em;
-            color: cyan;
+        .score-text .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .score-text .label {
+            font-size: 0.8rem;
+            color: #a0a0b0;
+            text-transform: uppercase;
+        }
+
+        .summary-box {
+            flex: 1;
+            margin-left: 2rem;
+        }
+
+        .summary-box h3 {
+            color: #a29bfe;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-box p {
+            color: #d1d1e0;
+            line-height: 1.6;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-card h3 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .success-card h3 {
+            color: #55efc4;
+        }
+
+        .improve-card h3 {
+            color: #ff7675;
+        }
+
+        .detail-list {
+            list-style: none;
+        }
+
+        .detail-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #e0e0e0;
+        }
+
+        .detail-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+
+        .success-card li::before {
+            color: #55efc4;
+        }
+
+        .improve-card li::before {
+            color: #ff7675;
+        }
+
+        .action-row {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4);
         }
     </style>
 </head>
 
 <body>
-    <div class="card">
-        <h1>Interview Report</h1>
-        <p>Session Completed</p>
-        <div class="score">8/10</div>
-        <p>Great job on demonstrating technical concepts!</p>
-        <button onclick="window.location.href='/'"
-            style="padding: 10px 20px; background: cyan; border: none; cursor: pointer;">Home</button>
+    <div class="report-container">
+        <header class="report-header">
+            <h1>Interview Performance Report</h1>
+            <p>Session completed on {{ report.get('date', 'Today') }}</p>
+        </header>
+
+        {% if report %}
+        <div class="score-card">
+            <div class="score-circle">
+                <svg>
+                    <circle class="score-bg" cx="75" cy="75" r="70"></circle>
+                    <circle class="score-val" cx="75" cy="75" r="70" id="progressCircle"></circle>
+                </svg>
+                <div class="score-text">
+                    <div class="number" id="scoreValue">0</div>
+                    <div class="label">Score</div>
+                </div>
+            </div>
+            <div class="summary-box">
+                <h3>Executive Summary</h3>
+                <p>{{ report.get('summary', 'No summary available.') }}</p>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-card success-card">
+                <h3>Key Strengths</h3>
+                <ul class="detail-list">
+                    {% for strength in report.get('strengths', []) %}
+                    <li>{{ strength }}</li>
+                    {% else %}
+                    <li>No specific strengths recorded.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="detail-card improve-card">
+                <h3>Areas for Improvement</h3>
+                <ul class="detail-list">
+                    {% for weakness in report.get('weaknesses', []) %}
+                    <li>{{ weakness }}</li>
+                    {% else %}
+                    <li>No specific weaknesses recorded.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-card" style="margin-top: 2rem;">
+            <h3>AI Suggestion</h3>
+            <p style="color: #d1d1e0;">{{ report.get('suggestion', 'Keep practicing!') }}</p>
+        </div>
+
+        {% else %}
+        <div class="glass-panel" style="text-align:center;">
+            <h2>No Report Data Found</h2>
+            <p>It seems like the session expired or no interview was conducted.</p>
+        </div>
+        {% endif %}
+
+        <div class="action-row">
+            <a href="/" class="btn-home">Return to Dashboard</a>
+        </div>
     </div>
+
+    <script>
+        // Animate Score
+        document.addEventListener('DOMContentLoaded', () => {
+            const score = {{ report.get('score', 0)
+        }};
+        const circle = document.getElementById('progressCircle');
+        const value = document.getElementById('scoreValue');
+
+        if (circle && value) {
+            const radius = circle.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (score / 100) * circumference;
+
+            // Animate
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+
+                // Counter animation
+                let start = 0;
+                const duration = 1500;
+                const stepTime = Math.abs(Math.floor(duration / score));
+
+                if (score > 0) {
+                    const timer = setInterval(() => {
+                        start += 1;
+                        value.textContent = start;
+                        if (start >= score) clearInterval(timer);
+                    }, stepTime);
+                }
+            }, 100);
+        }
+        });
+    </script>
 </body>
 
 </html>

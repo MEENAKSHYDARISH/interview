@@ -95,7 +95,7 @@ class SpeechManager {
             console.error("Speech synthesis error", e);
             if (this.onVoiceEnd) this.onVoiceEnd();
         };
-        
+
         // Pick a nice voice if available
         const voices = this.synthesis.getVoices();
         // Prefer a female/Google voice if available for clarity
@@ -120,7 +120,7 @@ class InterviewController {
             statusBadge: document.getElementById('statusBadge'),
             aiStatus: document.getElementById('aiStatus')
         };
-        
+
         this.apiState = {
             role: new URLSearchParams(window.location.search).get('role') || 'Software Engineer',
             type: new URLSearchParams(window.location.search).get('type') || 'Technical',
@@ -139,7 +139,7 @@ class InterviewController {
 
     init() {
         this.ui.roleBadge.textContent = `Role: ${this.apiState.role}`;
-        
+
         this.ui.startBtn.addEventListener('click', () => this.startInterview());
         this.ui.finishBtn.addEventListener('click', () => this.endInterview());
 
@@ -161,23 +161,23 @@ class InterviewController {
         this.ui.overlay.style.opacity = '0';
         setTimeout(() => this.ui.overlay.style.display = 'none', 500);
         this.ui.finishBtn.disabled = false;
-        
+
         // 3. Start API Session
         this.setStage('processing');
         this.updateAiCaption("Initializing interview component...", true);
-        
+
         try {
             const res = await fetch('/api/interview/start', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     role: this.apiState.role,
                     difficulty: 'Medium',
                     resume_text: "Demo User Resume..." // TODO: Fetch real resume
                 })
             });
             const data = await res.json();
-            
+
             this.aiQueue = data; // { "question": "..." }
             this.playAiResponse(data);
 
@@ -190,7 +190,7 @@ class InterviewController {
     playAiResponse(data) {
         // Feedback first?
         const fullText = (data.feedback ? data.feedback + " " : "") + data.question;
-        
+
         this.updateAiCaption(data.question);
         this.speechManager.speak(fullText);
     }
@@ -198,7 +198,7 @@ class InterviewController {
     setAvatarState(state) {
         // state: 'idle', 'speaking', 'listening', 'processing'
         const { avatar, statusBadge, aiStatus } = this.ui;
-        
+
         avatar.classList.remove('speaking');
         statusBadge.className = 'badge';
 
@@ -208,16 +208,16 @@ class InterviewController {
             statusBadge.textContent = "AI Speaking";
             aiStatus.textContent = "AI is asking...";
         } else if (state === 'listening') {
-             statusBadge.classList.add('status-listening');
-             statusBadge.textContent = "Listening...";
-             aiStatus.textContent = "Your turn";
-             
-             // Trigger listening automatically after AI finishes
-             this.speechManager.startListening();
+            statusBadge.classList.add('status-listening');
+            statusBadge.textContent = "Listening...";
+            aiStatus.textContent = "Your turn";
+
+            // Trigger listening automatically after AI finishes
+            this.speechManager.startListening();
         } else if (state === 'processing') {
-             statusBadge.classList.add('status-processing');
-             statusBadge.textContent = "Thinking...";
-             aiStatus.textContent = "AI is thinking...";
+            statusBadge.classList.add('status-processing');
+            statusBadge.textContent = "Thinking...";
+            aiStatus.textContent = "AI is thinking...";
         }
     }
 
@@ -226,20 +226,20 @@ class InterviewController {
         this.ui.userCaption.classList.add('visible');
     }
 
-    updateAiCaption(text, visible=true) {
+    updateAiCaption(text, visible = true) {
         this.ui.aiCaption.textContent = text;
-        if(visible) this.ui.aiCaption.classList.add('visible');
+        if (visible) this.ui.aiCaption.classList.add('visible');
     }
 
     async handleUserAnswer(text) {
         console.log("User Answer:", text);
         this.setStage('processing');
-        
+
         // Send to API
         try {
             const res = await fetch('/api/interview/chat', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ answer: text })
             });
             const data = await res.json();
@@ -252,12 +252,30 @@ class InterviewController {
     setStage(stage) {
         this.setAvatarState(stage);
     }
-    
-    endInterview() {
-        this.speechManager.stopListening();
-        this.speechManager.synthesis.cancel();
-        // Redirect to report
-        window.location.href = '/report';
+
+    async endInterview() {
+        if (confirm("Are you sure you want to end the interview?")) {
+            this.speechManager.stopListening();
+            this.speechManager.synthesis.cancel();
+
+            this.updateAiCaption("Generating Performance Report...", true);
+            this.setStage('processing');
+
+            try {
+                const res = await fetch('/api/interview/end', { method: 'POST' });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    window.location.href = data.redirect_url;
+                } else {
+                    alert("Error generating report: " + (data.error || "Unknown"));
+                    window.location.href = '/report';
+                }
+            } catch (e) {
+                console.error("End Interview Error", e);
+                window.location.href = '/report';
+            }
+        }
     }
 }
 

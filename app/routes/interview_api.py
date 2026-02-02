@@ -80,6 +80,51 @@ def chat_interview():
             "question": "Could you elaborate further on your previous experience?"
         })
 
+@interview_api_bp.route('/api/interview/end', methods=['POST'])
+def end_interview():
+    if 'interview_history' not in session:
+        return jsonify({"error": "No active session found"}), 400
+
+    history = session['interview_history']
+    
+    # Prompt for report generation
+    report_prompt = """
+    The interview is over. Please analyze the entire conversation above.
+    Provide a detailed performance report in JSON format with:
+    - score (integer 0-100)
+    - summary (string, 2-3 sentences)
+    - strengths (list of strings)
+    - weaknesses (list of strings)
+    - suggestion (string, improvement advice)
+    """
+    history.append({"role": "system", "content": report_prompt})
+
+    try:
+        if OPENAI_API_KEY == "dummy-key":
+             report_data = {
+                 "score": 85,
+                 "summary": "Good technical understanding but needs more confidence.",
+                 "strengths": ["Python Knowledge", "Problem Solving"],
+                 "weaknesses": ["Communication Spleed", "System Design Depth"],
+                 "suggestion": "Practice mock interviews to improve pacing."
+             }
+        else:
+            response = openai.ChatCompletion.create(
+                model="gpt-4o",
+                messages=history,
+                temperature=0.7,
+                max_tokens=600
+            )
+            content = response.choices[0].message["content"].strip()
+            report_data = _parse_json_from_text(content)
+        
+        session['report_data'] = report_data
+        session.pop('interview_history', None) # Clear history
+        return jsonify({"status": "success", "redirect_url": "/report"})
+    except Exception as e:
+        print(f"Report Error: {e}")
+        return jsonify({"error": str(e)}), 500
+
 def _get_openai_response(messages):
     if OPENAI_API_KEY == "dummy-key":
         return {
@@ -96,14 +141,22 @@ def _get_openai_response(messages):
         )
         content = response.choices[0].message["content"].strip()
         # Ensure we just get the JSON part if there's extra text
+        # Ensure we just get the JSON part if there's extra text
+        return _parse_json_from_text(content)
+    except Exception as e:
+        print(f"OpenAI Error: {e}")
+        raise e
+
+def _parse_json_from_text(content):
+    try:
         if "```json" in content:
             content = content.split("```json")[1].split("```")[0].strip()
         elif "{" in content:
             start = content.find("{")
             end = content.rfind("}") + 1
             content = content[start:end]
-
         return json.loads(content)
     except Exception as e:
-        print(f"OpenAI Error: {e}")
-        raise e
+        print(f"JSON Parse Error: {e}")
+        # Return empty structure on failure
+        return {}
