@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Interview Session</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/interview.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header / Status Bar -->
         <header class="top-bar">
-            <div class="logo">AI Interviewer</div>
+            <!--- Logo + Title --->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" style="height: 30px;">
+                <div class="logo">IntervuGo</div>
+            </div>
+
             <div class="session-info">
                 <span id="roleBadge" class="badge">Role: Loading...</span>
                 <span id="statusBadge" class="badge status-waiting">Waiting to Start</span>
             </div>
-            <button id="finishBtn" class="btn-danger" disabled>End Session</button>
+            <button id="finishBtn" class="btn-secondary" style="border-radius: 6px; padding: 5px 15px;" disabled>End
+                Session</button>
         </header>
 
         <!-- Main Content Area -->
         <main class="main-stage">
-            
+
             <!-- Avatar / AI View -->
             <div class="avatar-stage">
                 <div class="avatar-visualizer" id="avatarVisualizer">
@@ -51,9 +60,11 @@
             <!-- Controls Overlay -->
             <div class="controls-overlay" id="startOverlay">
                 <div class="glass-panel">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="app-logo">
                     <h2>Ready for your interview?</h2>
-                    <p>Can we access your camera and microphone?</p>
-                    <button id="startBtn" class="btn-primary-lg">Start Interview</button>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem;">Can we access your camera and microphone?
+                    </p>
+                    <button id="startBtn" class="btn-neon" style="max-width: 300px;">Start Interview</button>
                 </div>
             </div>
         </main>
@@ -64,4 +75,5 @@
 
     <script src="{{ url_for('static', filename='js/interview.js') }}"></script>
 </body>
+
 </html>

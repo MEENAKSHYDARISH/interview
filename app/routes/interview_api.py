@@ -9,17 +9,18 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "dummy-key")
 openai.api_key = OPENAI_API_KEY
 
 SYSTEM_PROMPT_TEMPLATE = """You are a professional AI Interviewer for a {role} position.
-Your goal is to conduct a structured interview based on the candidate's resume and responses.
+Your goal is to conduct a structured interview based STRONGLY on the candidate's resume and responses.
+
 Current Interface Difficulty: {difficulty}
 
 Resume Context:
 {resume_text}
 
 Rules:
-1. Ask one clear question at a time.
-2. Be professional but encouraging.
+1. Start by asking about a specific project or skill mentioned in the resume.
+2. Ask one clear question at a time.
 3. If the user's answer is too brief or off-topic, politely probe further.
-4. If the answer is good, acknowledge it briefly and move to the next relevant topic.
+4. If the answer is good, acknowledge it briefly and move to the next relevant topic from the resume or role requirements.
 5. Keep your responses concise (suitable for Text-to-Speech). Max 2-3 sentences for feedback, then the question.
 6. The output must be JSON with the following structure:
 {{
@@ -105,7 +106,7 @@ def end_interview():
                  "score": 85,
                  "summary": "Good technical understanding but needs more confidence.",
                  "strengths": ["Python Knowledge", "Problem Solving"],
-                 "weaknesses": ["Communication Spleed", "System Design Depth"],
+                 "weaknesses": ["Communication Speed", "System Design Depth"],
                  "suggestion": "Practice mock interviews to improve pacing."
              }
         else:
@@ -118,6 +119,32 @@ def end_interview():
             content = response.choices[0].message["content"].strip()
             report_data = _parse_json_from_text(content)
         
+        # Save to DB
+        from ..db import get_db
+        from ..models import InterviewReport
+        from flask_login import current_user
+        
+        db = get_db()
+        # Use current_user id if logged in, else None or anonymous
+        student_id = current_user.id if current_user.is_authenticated else "anonymous"
+        
+        # Extract role from session or prompt? Ideally session
+        # We can try to parse it or just assume 'Common' if not tracked
+        # Better: Pass it from frontend or track in session properly. 
+        # For now, let's grab it from history if possible or default.
+        role = "Interview Candidate" # Limitation of current session structure
+
+        InterviewReport.create(
+            db,
+            student_id,
+            role,
+            report_data.get('score', 0),
+            report_data.get('summary', ''),
+            report_data.get('strengths', []),
+            report_data.get('weaknesses', []),
+            report_data.get('suggestion', '')
+        )
+
         session['report_data'] = report_data
         session.pop('interview_history', None) # Clear history
         return jsonify({"status": "success", "redirect_url": "/report"})
