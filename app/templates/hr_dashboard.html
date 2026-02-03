@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}">
+    <!-- Inline styles specific to Dashboard layout -->
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: rgba(0, 0, 0, 0.5);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        .dash-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .report-table th,
+        .report-table td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .report-table th {
+            color: var(--neon-cyan);
+            font-weight: 600;
+        }
+
+        .report-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .score-high {
+            color: #00ffd5;
+            background: rgba(0, 255, 213, 0.1);
+        }
+
+        .score-mid {
+            color: #ffeaa7;
+            background: rgba(255, 234, 167, 0.1);
+        }
+
+        .score-low {
+            color: #ff7675;
+            background: rgba(255, 118, 117, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="app-logo"
+                style="margin-bottom: 2rem;">
+            <div style="margin-bottom: 2rem; text-align: center; color: white;">
+                <h3>{{ user.name }}</h3>
+                <p style="font-size: 0.8rem; color: var(--text-dim);">HR Admin</p>
+            </div>
+
+            <nav>
+                <a href="#" class="nav-item active">Dashboard</a>
+                <a href="#" class="nav-item">Candidates</a>
+                <a href="#" class="nav-item">Settings</a>
+                <a href="{{ url_for('hr_auth.logout') }}" class="nav-item"
+                    style="margin-top: 2rem; color: #ff7675;">Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 class="app-title" style="text-align: left; margin: 0; font-size: 2rem;">HR Dashboard</h1>
+                <button class="btn-neon" style="width: auto;"
+                    onclick="document.getElementById('addQuestionModal').style.display='flex'">+ Add Question</button>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div
+                style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; background: rgba(0,255,255,0.1); border: 1px solid cyan;">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Recent Reports -->
+            <div class="dash-card">
+                <h3 style="color: white; margin-bottom: 1rem;">Recent Interviews</h3>
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Role</th>
+                            <th>Date</th>
+                            <th>Score</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td>{{ report.student_name }}</td>
+                            <td>{{ report.role }}</td>
+                            <td>{{ report.get('date', 'N/A') }}</td>
+                            <td>
+                                <span
+                                    class="score-badge {% if report.score >= 80 %}score-high{% elif report.score >= 50 %}score-mid{% else %}score-low{% endif %}">
+                                    {{ report.score }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('hr_dashboard.view_report', report_id=report.id) }}"
+                                    class="btn-secondary"
+                                    style="padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 0.8rem;">View</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-dim);">No interviews recorded
+                                yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Question Modal -->
+    <div id="addQuestionModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="glass-card" style="width: 500px; position: relative;">
+            <button onclick="document.getElementById('addQuestionModal').style.display='none'"
+                style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; cursor: pointer;">✕</button>
+            <h2 style="text-align: center; margin-bottom: 20px; color: cyan;">Add Interview Question</h2>
+
+            <form action="{{ url_for('hr_dashboard.add_question') }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Target Role</label>
+                    <input type="text" name="role" class="form-control" placeholder="e.g. Software Engineer">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Question Type</label>
+                    <select name="type" class="form-control">
+                        <option value="Technical">Technical</option>
+                        <option value="Behavioral">Behavioral</option>
+                        <option value="System Design">System Design</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Question Content</label>
+                    <textarea name="content" class="form-control" rows="4"
+                        placeholder="Type the question here..."></textarea>
+                </div>
+                <button type="submit" class="btn-neon">Save Question</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

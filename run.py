@@ -1,5 +1,9 @@
 import sys
 import os
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
 
 
 # Add the project root to sys.path so 'app' can be imported

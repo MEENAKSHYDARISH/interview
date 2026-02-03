@@ -9,9 +9,10 @@ app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/ai_i
 
 # Routes / Blueprints
 # Routes / Blueprints
-from .routes.setup_bot import setup_bot_bp
 from .routes.hr_roles import hr_roles_bp
 from .routes.student_resume import student_resume_bp
+from .routes.hr_auth import hr_auth_bp
+from .routes.hr_dashboard import hr_dashboard_bp
 from .routes.auth import auth_bp
 from .routes.interview_api import interview_api_bp
 from flask_login import LoginManager, login_required, current_user
@@ -27,9 +28,10 @@ def load_user(user_id):
     db = get_db()
     return User.get_by_id(db, user_id)
 
-app.register_blueprint(setup_bot_bp)
 app.register_blueprint(hr_roles_bp)
 app.register_blueprint(student_resume_bp)
+app.register_blueprint(hr_auth_bp)
+app.register_blueprint(hr_dashboard_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(interview_api_bp)
 
