@@ -177,6 +177,7 @@ class InterviewController {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     role: this.apiState.role,
+                    type: this.apiState.type,
                     difficulty: 'Medium',
                     resume_text: this.apiState.resumeText
                 })

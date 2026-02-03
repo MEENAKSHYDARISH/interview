@@ -1,6 +1,6 @@
 flask
 flask-login
-openai
+google-generativeai
 python-dotenv
 pypdf
 pymongo
