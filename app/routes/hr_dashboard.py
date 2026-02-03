@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required, current_user
 from ..db import get_db
 from ..models import Question, InterviewReport, User
-from bson.objectid import ObjectId
 
 hr_dashboard_bp = Blueprint('hr_dashboard', __name__)
 
@@ -18,10 +17,10 @@ def dashboard():
     reports = InterviewReport.get_all(db)
     
     # Helper to get user names
-    # Optimize in prod: use aggregation
     enriched_reports = []
     for r in reports:
-        student = User.get_by_id(db, ObjectId(r['student_id']))
+        # student_id is stored as string in this JsonDB
+        student = User.get_by_id(db, r['student_id'])
         r['student_name'] = student.name if student else "Unknown"
         r['id'] = str(r['_id'])
         enriched_reports.append(r)
@@ -54,13 +53,14 @@ def view_report(report_id):
         return redirect(url_for('hr_auth.login'))
         
     db = get_db()
-    report_data = InterviewReport.get_by_id(db, ObjectId(report_id))
+    # report_id is passed as string from URL
+    report_data = InterviewReport.get_by_id(db, report_id)
     
     if not report_data:
         flash("Report not found")
         return redirect(url_for('hr_dashboard.dashboard'))
         
-    student = User.get_by_id(db, ObjectId(report_data['student_id']))
+    student = User.get_by_id(db, report_data['student_id'])
     report_data['student_name'] = student.name if student else "Unknown"
     
     return render_template('hr_view_report.html', report=report_data)
