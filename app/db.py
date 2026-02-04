@@ -86,6 +86,31 @@ class Collection:
             self.db.write(data)
         return updated
 
+    def delete_many(self, query):
+        data = self.db.read()
+        collection_data = data.get(self.name, [])
+        
+        new_collection_data = []
+        deleted_count = 0
+        
+        for item in collection_data:
+            match = True
+            for k, v in query.items():
+                if item.get(k) != v:
+                    match = False
+                    break
+            
+            if not match:
+                new_collection_data.append(item)
+            else:
+                deleted_count += 1
+        
+        if deleted_count > 0:
+            data[self.name] = new_collection_data
+            self.db.write(data)
+            
+        return deleted_count
+
 class JsonDB:
     def __init__(self, filepath=DB_FILE):
         self.filepath = filepath

@@ -52,16 +52,28 @@ def start_interview():
         resume_text=resume_text
     )
 
-    # Initialize chat history with system prompt (Gemini often works better if system prompt is separate or first message)
-    # For simplicity, we'll keep the structure but adapt how we call Gemini.
-    session['interview_history'] = [
+    # Initialize chat history with system prompt
+    history = [
         {"role": "user", "parts": [full_system_prompt + "\n\nStart the interview. Introduce yourself briefly as the AI Interviewer and ask the first question (e.g., 'Tell me about yourself')."]}
     ]
     
+    # Use DB instead of Session
+    from ..db import get_db
+    from ..models import ActiveInterview
+    from flask_login import current_user
+    
+    db = get_db()
+    # Ensure we have a user ID (even if anonymous for some reason, though app requires login)
+    user_id = current_user.id if current_user.is_authenticated else "anonymous_session" # Ideally should be session ID if anonymous
+    
     try:
-        response_data = _get_gemini_response(session['interview_history'])
+        response_data = _get_gemini_response(history)
         # Add assistant response to history
-        session['interview_history'].append({"role": "model", "parts": [json.dumps(response_data)]})
+        history.append({"role": "model", "parts": [json.dumps(response_data)]})
+        
+        # Save to DB
+        ActiveInterview.create(db, user_id, history)
+        
         return jsonify(response_data)
     except Exception as e:
         return jsonify({"error": str(e), "question": "Hello. I'm ready to interview you. Could you introduce yourself?", "feedback": ""})
@@ -71,15 +83,31 @@ def chat_interview():
     data = request.json
     user_answer = data.get('answer', '')
 
-    if 'interview_history' not in session:
+    from ..db import get_db
+    from ..models import ActiveInterview
+    from flask_login import current_user
+    
+    db = get_db()
+    user_id = current_user.id if current_user.is_authenticated else "anonymous_session"
+    
+    active_session = ActiveInterview.get_by_student(db, user_id)
+
+    if not active_session or 'history' not in active_session:
+        # Fallback to check session just in case, or error out
         return jsonify({"error": "Session expired", "question": "Please restart the interview.", "feedback": ""}), 400
 
+    history = active_session['history']
+
     # Append user answer
-    session['interview_history'].append({"role": "user", "parts": [user_answer]})
+    history.append({"role": "user", "parts": [user_answer]})
 
     try:
-        response_data = _get_gemini_response(session['interview_history'])
-        session['interview_history'].append({"role": "model", "parts": [json.dumps(response_data)]})
+        response_data = _get_gemini_response(history)
+        history.append({"role": "model", "parts": [json.dumps(response_data)]})
+        
+        # Update DB
+        ActiveInterview.update_history(db, user_id, history)
+        
         return jsonify(response_data)
     except Exception as e:
         # Fallback mechanism if JSON parsing fails or API errors
@@ -90,10 +118,19 @@ def chat_interview():
 
 @interview_api_bp.route('/api/interview/end', methods=['POST'])
 def end_interview():
-    if 'interview_history' not in session:
+    from ..db import get_db
+    from ..models import ActiveInterview, InterviewReport
+    from flask_login import current_user
+    
+    db = get_db()
+    user_id = current_user.id if current_user.is_authenticated else "anonymous_session"
+    
+    active_session = ActiveInterview.get_by_student(db, user_id)
+
+    if not active_session:
         return jsonify({"error": "No active session found"}), 400
 
-    history = session['interview_history']
+    history = active_session['history']
     
     # Prompt for report generation
     report_prompt = """
@@ -122,18 +159,11 @@ def end_interview():
             final_response = _get_gemini_response(report_history, json_mode=True)
             report_data = final_response if isinstance(final_response, dict) else _parse_json_from_text(str(final_response))
         
-        # Save to DB
-        from ..db import get_db
-        from ..models import InterviewReport
-        from flask_login import current_user
-        
-        db = get_db()
-        student_id = current_user.id if current_user.is_authenticated else "anonymous"
         role = "Interview Candidate" 
 
         InterviewReport.create(
             db,
-            student_id,
+            user_id,
             role,
             report_data.get('score', 0),
             report_data.get('summary', ''),
@@ -143,7 +173,10 @@ def end_interview():
         )
 
         session['report_data'] = report_data
-        session.pop('interview_history', None) # Clear history
+        
+        # Clear DB Session
+        ActiveInterview.delete_by_student(db, user_id)
+        
         return jsonify({"status": "success", "redirect_url": "/report"})
     except Exception as e:
         print(f"Report Error: {e}")

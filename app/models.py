@@ -67,3 +67,30 @@ class InterviewReport:
     @staticmethod
     def get_by_id(db, report_id):
         return db.reports.find_one({"_id": report_id})
+
+class ActiveInterview:
+    @staticmethod
+    def create(db, student_id, history):
+        # Remove existing active interview for this student if any
+        db.active_interviews.delete_many({"student_id": student_id})
+        return db.active_interviews.insert_one({
+            "student_id": student_id,
+            "history": history,
+            "updated_at": "now"
+        })
+
+    @staticmethod
+    def get_by_student(db, student_id):
+        return db.active_interviews.find_one({"student_id": student_id})
+
+    @staticmethod
+    def update_history(db, student_id, history):
+        return db.active_interviews.update_one(
+            {"student_id": student_id},
+            {"$set": {"history": history, "updated_at": "now"}}
+        )
+
+    @staticmethod
+    def delete_by_student(db, student_id):
+        return db.active_interviews.delete_many({"student_id": student_id})
+

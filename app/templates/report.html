@@ -164,37 +164,36 @@
     <!-- Re-use the score animation script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const score =()=> {{ report.get('score', 0)
-        }};
-        const circle = document.getElementById('progressCircle');
-        const value = document.getElementById('scoreValue');
+            const score = Number("{{ report.get('score', 85) if report else 0 }}");
+            const circle = document.getElementById('progressCircle');
+            const value = document.getElementById('scoreValue');
 
-        if (circle && value) {
-            const radius = circle.r.baseVal.value;
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (score / 100) * circumference;
+            if (circle && value) {
+                const radius = circle.r.baseVal.value;
+                const circumference = 2 * Math.PI * radius;
+                const offset = circumference - (score / 100) * circumference;
 
-            circle.style.strokeDasharray = `${circumference} ${circumference}`;
-            circle.style.strokeDashoffset = circumference;
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                circle.style.strokeDashoffset = circumference;
 
-            // Animate
-            setTimeout(() => {
-                circle.style.strokeDashoffset = offset;
+                // Animate
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
 
-                // Counter animation
-                let start = 0;
-                const duration = 1500;
-                const stepTime = Math.abs(Math.floor(duration / score));
+                    // Counter animation
+                    let start = 0;
+                    const duration = 1500;
+                    const stepTime = Math.abs(Math.floor(duration / score));
 
-                if (score > 0) {
-                    const timer = setInterval(() => {
-                        start += 1;
-                        value.textContent = start;
-                        if (start >= score) clearInterval(timer);
-                    }, stepTime);
-                }
-            }, 100);
-        }
+                    if (score > 0) {
+                        const timer = setInterval(() => {
+                            start += 1;
+                            value.textContent = start;
+                            if (start >= score) clearInterval(timer);
+                        }, stepTime);
+                    }
+                }, 100);
+            }
         });
     </script>
 </body>
