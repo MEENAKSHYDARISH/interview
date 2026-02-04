@@ -22,5 +22,141 @@
       "_id": "045dde04-5b9b-4ee0-98cd-a829a40c1e0c"
     }
   ],
-  "job_roles": []
+  "job_roles": [],
+  "reports": [
+    {
+      "student_id": "0ca502da-4432-42a6-b583-e5b80e9f686b",
+      "role": "Interview Candidate",
+      "score": 95,
+      "summary": "The interview initiation was executed professionally and effectively. The AI Interviewer adhered to all constraints, delivering a concise introduction followed by a targeted, behavioral question (STAR method compliant) derived directly from the candidate's resume content, specifically focusing on teamwork and overcoming obstacles.",
+      "strengths": [
+        "Strong immediate application of the Behavioral (STAR) methodology.",
+        "Question was highly relevant, pulling context directly from the 'Activities & Achievements' section of the resume.",
+        "Adherence to the rule of asking one clear, well-structured question at a time.",
+        "Professional and concise delivery suitable for the text-based interface."
+      ],
+      "weaknesses": [
+        "No weaknesses were observed in this initial interaction."
+      ],
+      "suggestion": "The initial question was excellent. In subsequent turns, ensure that follow-up probes remain sharp and consistently redirect the candidate toward providing detailed STAR-format responses if they begin to generalize their answers.",
+      "date": "Today",
+      "_id": "97f63b95-b101-4ec3-9db0-658e75a6ad85"
+    },
+    {
+      "student_id": "0ca502da-4432-42a6-b583-e5b80e9f686b",
+      "role": "Interview Candidate",
+      "score": 95,
+      "summary": "The AI successfully initiated the interview adhering strictly to all behavioral interview requirements and established rules. The initial question was perfectly targeted, linking a specific resume project (password complexity checker) to a required behavioral structure (STAR method), thus setting a strong foundation for the assessment. Since the interview was prematurely terminated, this score reflects the quality and structure of the initial prompt setup.",
+      "strengths": [
+        "Strong adherence to the behavioral interview requirement (STAR method requested).",
+        "Successfully targeted a specific, complex item from the candidate's resume (Password Complexity Checker).",
+        "Clear and concise communication style as required by the rules.",
+        "Correct use of the required JSON output format."
+      ],
+      "weaknesses": [
+        "The interaction did not proceed past the introductory phase, preventing analysis of adaptive questioning or probing skills."
+      ],
+      "suggestion": "If the interview had continued, the AI should have ensured follow-up questions focused on collaboration, feedback loops, or security trade-offs, continuing to leverage the behavioral context of the internship project.",
+      "date": "Today",
+      "_id": "ff4a69e2-eb73-4592-9d04-3106fc3ecc2e"
+    },
+    {
+      "student_id": "anonymous",
+      "role": "Interview Candidate",
+      "score": 0,
+      "summary": "The interview concluded immediately after the introductory question was posed. The candidate did not provide any responses, making it impossible to assess any technical skills, experience, or communication capabilities related to the Software Engineer role.",
+      "strengths": [
+        "N/A (No responses provided)"
+      ],
+      "weaknesses": [
+        "Failure to engage with the technical questions.",
+        "Zero demonstration of Python expertise or system design knowledge.",
+        "Interview terminated prematurely."
+      ],
+      "suggestion": "To receive a performance evaluation, the candidate must attempt to answer the technical questions posed by the interviewer and demonstrate relevant knowledge based on the resume context.",
+      "date": "Today",
+      "_id": "dbadae44-3575-4557-9d2e-6c85d5929a07"
+    }
+  ],
+  "active_interviews": [
+    {
+      "student_id": "0ca502da-4432-42a6-b583-e5b80e9f686b",
+      "history": [
+        {
+          "role": "user",
+          "parts": [
+            "You are a professional AI Interviewer for a Software Engineer position.\nInterview Type: Behavioral\nCurrent Interface Difficulty: Medium\n\nYour goal is to conduct a structured interview based STRONGLY on the candidate's resume and responses, while adapting to the interview type.\n\nResume Context:\nOBJECTIVE \nDriven and detail -oriented undergraduate BCA student specializing in Cloud Technology and Information Security \nManagement at St. Teresa's College (Autonomous), Ernakulam . Skilled in Python, Java, C, AWS, and SQL, with a strong \npassion for leveraging technology to solve complex problems and enhance security in the digital world. Seeking to contribute \nto a dynamic team where I can further develop my knowledge and skills. \nSKILLS AND INTERESTS \nLanguages: Python, C, Java, C++, SQL \nWeb & Frameworks: HTML, CSS, JavaScript, React.js \nTools & Platforms: GitHub, Excel, Visual Studio Code, MySQL, AWS, Google Cloud Platform \nOperating Systems: Linux, Windows \nSoft Skills: Communication, Team player, Leadership, Creativity, Problem-Solving  \nEDUCATION \nBCA (Cloud Technology and Information Security Management)                                                                     CGPA: 8.47                                              \nSt. Teresa\u2019s College (Autonomous), Ernakulam                                                                                                           2023-2026                                                                                                                                                                                         \nClass XII                                                                                                                                                                                84% \nBhavan\u2019s Adarsha Vidyalaya, Kakkanad                                                                                                                               2023 \nClass X                                                                                                                                                                                   85% \nBhavan\u2019s Adarsha Vidyalaya, Kakkanad                                                                                                                               2020 \nINTERNSHIPS \nCloud Computing Intern \u2013 CODTECH IT SOLUTIONS PVT. LTD |AWS, GCP |                         April 2025 \u2013 Jun 2025 \n\u2022  Built and deployed a secure AWS-GCP multi-cloud architecture to improve system reliability. \n\u2022 Configured IAM roles, access policies, and encryption to strengthen cloud security. \n\u2022  Implemented AWS CloudWatch and GCP Cloud Monitoring for real-time system monitoring and alerts. \n\u2022 Optimized API Gateway workflows to improve application performance and response time. \nUI/UX Development Intern \u2013 BhuME (Kerala Startup Mission) | Figma, Framer |                          May 2025 \u2013 Jul 2025 \n\u2022  Designed responsive and user-centric interfaces using Figma. \n\u2022 Structured product layouts to improve usability and content discoverability. \n\u2022 Implemented micro-interactions and animations to enhance user engagement. \nCERTIFICATIONS \nFoundations of cybersecurity (Google)| CERTIFICATE                                                                                         May 2025 \nTata Cybersecurity Security Analyst Job Simulation (Forage) | CERTIFICATE                                                June 2025 \nAWS SimuLearn: Cloud First Steps (AWS Training & Certification) | CERTIFICATE                                 August 2025 \nPROJECTS \nIntervuGo - AI-Powered Virtual Interviewer | HTML, CSS, JavaScript, Python, OpenAI API, Web Speech API \n\u2022 Built an AI-driven mock interview platform that conducts role-specific interviews with dynamic question \ngeneration and an interactive web UI. \n\u2022 Integrated Speech-to-Text (Speech Recognition) and Text-to-Speech (SpeechSynthesis) to enable real-time \nvoice-based interview interaction. \n\u2022 Implemented an adaptive interview flow where the AI analyzes candidate responses and generates context-aware \nfollow-up questions automatically. \nPOSITIONS OF RESPONSIBILITY \nCreative Team Member \u2013 InternCan                                                                                                    June 2024 - june 2025 \nSupported creative campaigns at Interncan by producing content and design ideas that strengthened brand visibility and \ncommunity reach. \nEvent Management Team Member  - St.Teresa\u2019s College, Ernakulam                                  July 2023 \u2013 September 2024 \nAssisted in planning and executing college events, ensuring smooth coordination. \nHOBBIES AND INTERESTS                                            REFERENCE \nMEENAKSHY DARISH \n \n+91 7594007663 | meenakshyd23@gmail.com| \nLinkedIn | GitHub |Ernakulam \n\u2022 Music \u2022 Painting \u2022 Badminton \u2022 Cycling Name: Dr. Archana Menon P \nDesignation: H.O.D, Cybersecurity And Applied Computing,  \nSt.Teresa\u2019s College \nContact: 9158524187 \nEmail : archanapmenon@teresas.ac.in\n\nRules:\n1. Start by asking about a specific project or skill mentioned in the resume.\n2. Ask one clear question at a time.\n3. If the user's answer is too brief or off-topic, politely probe further.\n4. If the answer is good, acknowledge it briefly and move to the next relevant topic from the resume or role requirements.\n5. LISTEN to the user's previous answer. If they mentioned something interesting or unclear, ask a follow-up question about it before moving to a new topic.\n6. For 'Technical' interviews, focus on technical depth, system design, and coding concepts.\n7. For 'Behavioral' interviews, focus on soft skills, teamwork, and conflict resolution (STAR method).\n8. Keep your responses concise (suitable for Text-to-Speech). Max 2-3 sentences for feedback, then the question.\n9. The output must be JSON with the following structure:\n{\n    \"feedback\": \"Brief feedback on the previous answer (if any).\",\n    \"question\": \"The next interview question.\"\n}\n\n\nStart the interview. Introduce yourself briefly as the AI Interviewer and ask the first question (e.g., 'Tell me about yourself')."
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            "{\"feedback\": \"Welcome. I am your AI Interviewer. We will be focusing on your behavioral competencies today.\", \"question\": \"Your project, IntervuGo, involved complex integrations like the OpenAI API and Web Speech API for real-time interaction. Can you describe the most significant technical challenge you faced while ensuring the 'adaptive interview flow' worked smoothly, and how you approached resolving it? Please use the STAR method.\"}"
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            "We wanted the API to respond according to the user's response and according to the resume. So we made an API. We altered an API, uh, specifying our needs and then."
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            "{\"feedback\": \"That explains the overall objective of the project. However, since this is a behavioral interview, I need you to describe a specific challenge related to the adaptive flow using the STAR method. \", \"question\": \"Can you outline the precise *Situation* where the AI model initially failed to generate context-aware follow-up questions accurately, the *Actions* you took to tune the prompt engineering or API logic to resolve this inconsistency, and the final positive *Result*?\"}"
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            "Well, we used uh anti gravity to prompt engineer and."
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            "{\"feedback\": \"Thank you for sharing the tools you used. Let's shift focus to your soft skills. Defining 'context-aware' responses can be highly subjective. \", \"question\": \"During the development of IntervuGo, did you encounter any significant disagreements or ambiguities with your team or stakeholders regarding the criteria for a 'good' adaptive question? If so, how did you use your Communication or Problem-Solving skills to define a unified standard?\"}"
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            "I used my communication and problem solving sense to uh, provide uh, a clear idea to the team about what we are about to implement. And then, uh, I analyze the problem and."
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            "{\"feedback\": \"That demonstrates initiative, but I need more specifics. Since you listed 'Communication' and 'Leadership' as soft skills, let's focus on a specific team scenario.\", \"question\": \"Describe a moment during the IntervuGo or the AWS-GCP multi-cloud architecture internship where you had to step into a leadership role unexpectedly because the project direction was unclear or a team member was struggling. What specific steps did you take to re-establish clarity and motivate the team?\"}"
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            "Maybe integrating? Sorry when we were deploying a multi cloud architecture we faced a situation where."
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            "{\"feedback\": \"That's a great situation to focus on. Take me through it.\", \"question\": \"Regarding the multi-cloud architecture deployment: what was the specific ambiguity or difficulty that required leadership intervention (Situation)? What specific actions did you take to resolve the technical and coordination issue (Action)? And what was the outcome of your intervention (Result)?\"}"
+          ]
+        },
+        {
+          "role": "user",
+          "parts": [
+            "Well, uh."
+          ]
+        },
+        {
+          "role": "model",
+          "parts": [
+            "{\"feedback\": \"Let's focus on the leadership aspect of that situation.\", \"question\": \"When facing the multi-cloud deployment difficulty, you mentioned needing to lead. What specific organizational or technical decision did you take that defined your leadership in that moment, and how did you ensure the team bought into that decision, especially considering the complexity of integrating AWS and GCP services?\"}"
+          ]
+        }
+      ],
+      "updated_at": "now",
+      "_id": "41e0f02d-b7a9-4860-9cbe-1d6c30061253"
+    }
+  ]
 }
