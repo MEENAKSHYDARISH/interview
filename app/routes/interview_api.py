@@ -35,7 +35,7 @@ Rules:
 """
 
 def get_gemini_model():
-    return genai.GenerativeModel('gemini-flash-latest')
+    return genai.GenerativeModel('gemini-1.5-flash')
 
 @interview_api_bp.route('/api/interview/start', methods=['POST'])
 def start_interview():

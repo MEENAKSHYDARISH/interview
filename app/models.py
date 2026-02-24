@@ -62,7 +62,9 @@ class InterviewReport:
 
     @staticmethod
     def get_all(db):
-        return list(db.reports.find().sort("_id", -1))
+        reports = list(db.reports.find())
+        # Sort by _id descending (latest first)
+        return sorted(reports, key=lambda x: x.get('_id', ''), reverse=True)
 
     @staticmethod
     def get_by_id(db, report_id):
