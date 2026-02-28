@@ -56,6 +56,7 @@ def start_interview():
     history = [
         {"role": "user", "parts": [full_system_prompt + "\n\nStart the interview. Introduce yourself briefly as the AI Interviewer and ask the first question (e.g., 'Tell me about yourself')."]}
     ]
+    print(history)
     
     # Use DB instead of Session
     from ..db import get_db
@@ -104,7 +105,7 @@ def chat_interview():
     try:
         response_data = _get_gemini_response(history)
         history.append({"role": "model", "parts": [json.dumps(response_data)]})
-        
+        print("history",history)
         # Update DB
         ActiveInterview.update_history(db, user_id, history)
         
