@@ -35,7 +35,7 @@ Rules:
 """
 
 def get_gemini_model():
-    return genai.GenerativeModel('gemini-1.5-flash')
+    return genai.GenerativeModel('gemini-2.5-flash')
 
 @interview_api_bp.route('/api/interview/start', methods=['POST'])
 def start_interview():
@@ -77,7 +77,10 @@ def start_interview():
         
         return jsonify(response_data)
     except Exception as e:
-        return jsonify({"error": str(e), "question": "Hello. I'm ready to interview you. Could you introduce yourself?", "feedback": ""})
+        fallback_data = {"error": str(e), "question": "Hello. I'm ready to interview you. Could you introduce yourself?", "feedback": ""}
+        history.append({"role": "model", "parts": [json.dumps(fallback_data)]})
+        ActiveInterview.create(db, user_id, history)
+        return jsonify(fallback_data)
 
 @interview_api_bp.route('/api/interview/chat', methods=['POST'])
 def chat_interview():
@@ -112,10 +115,14 @@ def chat_interview():
         return jsonify(response_data)
     except Exception as e:
         # Fallback mechanism if JSON parsing fails or API errors
-        return jsonify({
+        fallback_data = {
             "feedback": "I didn't quite catch that.",
-            "question": "Could you elaborate further on your previous experience?"
-        })
+            "question": "Could you elaborate further on your previous experience?",
+            "error": str(e)
+        }
+        history.append({"role": "model", "parts": [json.dumps(fallback_data)]})
+        ActiveInterview.update_history(db, user_id, history)
+        return jsonify(fallback_data)
 
 @interview_api_bp.route('/api/interview/end', methods=['POST'])
 def end_interview():
