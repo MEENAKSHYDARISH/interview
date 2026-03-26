@@ -4,15 +4,18 @@
  */
 
 class SpeechManager {
-    constructor(onSpeechResult, onSpeechEnd, onVoiceStart, onVoiceEnd) {
+    constructor(onSpeechResult, onSpeechEnd, onVoiceStart, onVoiceEnd, onSpeechError) {
         this.recognition = null;
         this.synthesis = window.speechSynthesis;
         this.onSpeechResult = onSpeechResult;
         this.onSpeechEnd = onSpeechEnd; // When user stops speaking and we have final text
         this.onVoiceStart = onVoiceStart; // AI starts speaking
         this.onVoiceEnd = onVoiceEnd; // AI stops speaking
+        this.onSpeechError = onSpeechError; // Recognition start/runtime errors
         this.isListening = false;
         this.finalTranscript = '';
+        this.interimTranscript = '';
+        this._shouldAutoRestart = false;
 
         this._initRecognition();
     }
@@ -42,8 +45,9 @@ class SpeechManager {
                     interimTranscript += event.results[i][0].transcript;
                 }
             }
+            this.interimTranscript = interimTranscript;
             // Update UI with interim
-            if (this.onSpeechResult) this.onSpeechResult(this.finalTranscript + interimTranscript, false);
+            if (this.onSpeechResult) this.onSpeechResult((this.finalTranscript + interimTranscript).trim(), false);
         };
 
         this.recognition.onend = () => {
@@ -51,26 +55,55 @@ class SpeechManager {
             console.log('Voice recognition ended.');
             // Determine if we should process or restart
             // If we have text, trigger callback
-            if (this.finalTranscript.trim().length > 0) {
-                if (this.onSpeechEnd) this.onSpeechEnd(this.finalTranscript.trim());
-                this.finalTranscript = ''; // Reset
-            } else {
-                // Restart if logic requires continuous listening (handled by controller)
+            const combined = `${this.finalTranscript} ${this.interimTranscript}`.trim();
+            const hasText = combined.length > 0;
+
+            if (hasText) {
+                if (this.onSpeechEnd) this.onSpeechEnd(combined);
+            } else if (this._shouldAutoRestart) {
+                setTimeout(() => this.startListening({ autoRestart: true }), 250);
             }
+
+            this.finalTranscript = '';
+            this.interimTranscript = '';
         };
 
         this.recognition.onerror = (event) => {
             console.error('Speech recognition error', event.error);
+            if (this.onSpeechError) this.onSpeechError(event.error || 'unknown-error');
+            const combined = `${this.finalTranscript} ${this.interimTranscript}`.trim();
+            if (combined.length > 0) {
+                try {
+                    if (this.recognition) this.recognition.stop();
+                } catch (_) {}
+                if (this.onSpeechEnd) this.onSpeechEnd(combined);
+                this.finalTranscript = '';
+                this.interimTranscript = '';
+                return;
+            }
+
+            if (this._shouldAutoRestart && (event.error === 'no-speech' || event.error === 'aborted')) {
+                setTimeout(() => this.startListening({ autoRestart: true }), 250);
+            }
         };
     }
 
-    startListening() {
+    startListening({ autoRestart = false } = {}) {
+        if (!this.recognition) {
+            console.warn("Speech recognition unavailable in this browser/context.");
+            if (this.onSpeechError) this.onSpeechError('speech-recognition-unavailable');
+            return;
+        }
         if (this.isListening) return;
         this.finalTranscript = '';
+        this.interimTranscript = '';
+        this._shouldAutoRestart = autoRestart;
         try {
             this.recognition.start();
         } catch (e) {
             console.error("Recognition start failed", e);
+            // This is commonly thrown if called too quickly, or blocked by browser policy.
+            if (this.onSpeechError) this.onSpeechError(e?.name || 'recognition-start-failed');
         }
     }
 
@@ -118,7 +151,8 @@ class InterviewController {
             userCaption: document.getElementById('userCaption'),
             roleBadge: document.getElementById('roleBadge'),
             statusBadge: document.getElementById('statusBadge'),
-            aiStatus: document.getElementById('aiStatus')
+            aiStatus: document.getElementById('aiStatus'),
+            micLevel: document.getElementById('micLevel')
         };
 
         // Load config from sessionStorage if available (from Select Page)
@@ -136,7 +170,8 @@ class InterviewController {
             (text, final) => this.updateUserCaption(text), // onResult
             (text) => this.handleUserAnswer(text),          // onEnd (Process answer)
             () => this.setAvatarState('speaking'),          // onVoiceStart
-            () => this.setAvatarState('listening')          // onVoiceEnd
+            () => this.setAvatarState('listening'),         // onVoiceEnd
+            (err) => this.handleSpeechError(err)            // onSpeechError
         );
 
         this.init();
@@ -170,6 +205,7 @@ class InterviewController {
         // 3. Start API Session
         this.setStage('processing');
         this.updateAiCaption("Initializing interview component...", true);
+        this.setMicLevelText("Mic ready");
 
         try {
             const res = await fetch('/api/interview/start', {
@@ -198,7 +234,15 @@ class InterviewController {
         const fullText = (data.feedback ? data.feedback + " " : "") + data.question;
 
         this.updateAiCaption(data.question);
+        // Ensure we enter speaking stage even if TTS events don't fire (autoplay policies can block).
+        this.setStage('speaking');
         this.speechManager.speak(fullText);
+        // Fallback: if TTS doesn't start/end properly, still begin listening shortly after question shows.
+        setTimeout(() => {
+            if (!this.speechManager.synthesis.speaking && !this.speechManager.isListening) {
+                this.setAvatarState('listening');
+            }
+        }, 1200);
     }
 
     setAvatarState(state) {
@@ -219,11 +263,29 @@ class InterviewController {
             aiStatus.textContent = "Your turn";
 
             // Trigger listening automatically after AI finishes
-            this.speechManager.startListening();
+            this.setMicLevelText("Listening…");
+            this.speechManager.startListening({ autoRestart: true });
         } else if (state === 'processing') {
             statusBadge.classList.add('status-processing');
             statusBadge.textContent = "Thinking...";
             aiStatus.textContent = "AI is thinking...";
+            this.setMicLevelText("—");
+        }
+    }
+
+    setMicLevelText(text) {
+        if (this.ui.micLevel) this.ui.micLevel.textContent = text;
+    }
+
+    handleSpeechError(err) {
+        // Surface common recognition issues in the UI so it's debuggable without devtools.
+        const msg = `Mic error: ${err}`;
+        console.warn(msg);
+        this.setMicLevelText(msg);
+        this.ui.aiStatus.textContent = "Microphone issue";
+        // If recognition was blocked, retry after a short delay (often fixes rapid restart).
+        if (err === 'InvalidStateError' || err === 'recognition-start-failed') {
+            setTimeout(() => this.speechManager.startListening({ autoRestart: true }), 500);
         }
     }
 
